@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Movie Search</title>
+    <link rel="stylesheet" href="style.css" />
+    <!-- <link rel="stylesheet" href="result.css" /> -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="main.js" async></script>
+  </head>
+  <body>
+    <nav>
+      <div class="nav__box">
+      <p>Home</p>
+      <ul>
+        <li>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 0 24 24"
+            width="24px"
+            fill="#ffffff"
+          >
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path
+              d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+            />
+          </svg>
+        </li>
+      </div>
+      </ul>
+    </nav>
+    <!-- Search -->
+    <section id="search">
+      <div class="background">
+        <div class="search">
+          <div class="searchbar">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#808080"
+            >
+              <path d="M0 0h24v24H0z" fill="none" />
+              <path
+                d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+              />
+            </svg>
+            <input
+              class="search__input"
+              type="text"
+              placeholder="검색할 요리를 입력해주세요."
+            />
+          </div>
+
+          <main class="search__tag">
+            <div class="tag__item">
+              <p># chicken</p>
+            </div>
+            <div class="tag__item">
+              <p># salad</p>
+            </div>
+            <div class="tag__item">
+              <p># steak</p>
+            </div>
+            <div class="tag__item">
+              <p># noodle</p>
+            </div>
+            <div class="tag__item">
+              <p># shrimp</p>
+            </div>
+            <div class="tag__item">
+              <p># banana</p>
+            </div>
+            <div class="tag__item">
+              <p># pizza</p>
+            </div>
+            <div class="tag__item">
+              <p># tomato</p>
+            </div>
+          </main>
+        </div>
+      </div>
+    </section>
+    <section id="result">
+      <div class="background">
+        <!-- <img class="result_back" src="img/cinema_2.jpg" alt="cinema_2" /> -->
+        <ul class="recipe__list">
+          <!-- <li class="recipe__card">
+            <div class="recipe__card__inner">
+              <h3>title</h3>
+              <img src="img/film.jpg" alt="food" />
+              <div class="recipe__card__content">
+               
+                <p>소요시간</p>
+                <p>칼로리</p>
+                <p>요리순서</p>
+              </div>
+            </div> -->
+          </li>
+        </ul>
+      </div>
+    </section>
+   
+  </body>
+
+</html>

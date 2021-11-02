@@ -9,7 +9,7 @@
 body {
   width: 100%;
   height: 100vh;
-  overflow-y: hidden;
+  /* overflow-y: hidden; */
   font-family: 'Poppins', sans-serif;
   color: rgb(56, 56, 56);
 }
@@ -285,7 +285,7 @@ nav {
 }
 
 /* paging css*/
-.pageination {
+.pagination {
   width: auto;
   height: 30px;
   position: absolute;

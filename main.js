@@ -1,4 +1,4 @@
-import { APP_ID, APP_KEY } from './config';
+import { APP_ID, APP_KEY } from './config.js';
 
 const searchInput = document.querySelector('.search__input');
 const searchBtn = document.querySelector('.searchBtn');

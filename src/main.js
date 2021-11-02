@@ -9,8 +9,6 @@ const pageBtn = document.querySelectorAll('.page');
 const recipeBtn = document.querySelectorAll('.recipe__btn');
 const tagButtons = document.querySelector('.search__tag');
 let searchedRecipe = [];
-let recipePerPage = [];
-let recipeCard = [];
 
 //tagBtn 클릭
 tagButtons.addEventListener('click', (e, el) => {
@@ -105,3 +103,5 @@ const getRecipeBtn = document.querySelector('.recipe__btn');
 recipeList.addEventListener('click', (e) => {
   console.log(e);
 });
+
+function paging(totaData, currentPage) {}

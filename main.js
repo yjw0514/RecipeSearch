@@ -1,3 +1,5 @@
+import { APP_ID, APP_KEY } from './config';
+
 const searchInput = document.querySelector('.search__input');
 const searchBtn = document.querySelector('.searchBtn');
 const recipeList = document.querySelector('.recipe__list');
@@ -53,8 +55,8 @@ function getRecipe(searchword) {
       params: {
         q: searchword,
         to: 20,
-        app_id: '',
-        app_key: '',
+        app_id: APP_ID,
+        app_key: APP_KEY,
       },
     })
     .then((response) => {
@@ -84,47 +86,19 @@ function renderRecipe(recipeData) {
     const data = recipe.recipe;
     searchedRecipe.push({ ...data });
   });
-
-  let currentPage = 1;
-  const perPage = 10;
-  const start = (currentPage - 1) * perPage;
-  const end = currentPage * perPage;
-  const page = searchedRecipe.length / perPage;
-
-  showRecipeList(start, end);
-  pagination(page);
-
-  console.log(pageBtn);
 }
 
-function showRecipeList(start, end) {
-  recipePerPage = searchedRecipe.slice(start, end);
-  console.log(recipePerPage);
-  recipePerPage.forEach((data) => {
-    recipeList.innerHTML += `
-      <li class="recipe__card">
-      <div class="recipe__card__inner">
-      <img src=${data.image} alt="food" />
-      <h3>${data.label}</h3>
-      <p>${Math.floor(data.calories)}kcal</p>
-      <button class="recipe__btn">Get Recipe</button>
-      </div>
-      </li>`;
-  });
-  console.log(recipeBtn);
-}
-
-//pagination
-function pagination(page) {
-  console.log(page);
-  if (page > 1) {
-    for (i = 1; i <= page; i++) {
-      pages.innerHTML += `<li class="page">${i}</li>`;
-    }
-  } else {
-    pages.innerHTML += `<li class="page">1</li>`;
-  }
-}
+//   searchedRecipe.forEach((data) => {
+//     recipeList.innerHTML += `
+//       <li class="recipe__card">
+//       <div class="recipe__card__inner">
+//       <img src=${data.image} alt="food" />
+//       <h3>${data.label}</h3>
+//       <p>${Math.floor(data.calories)}kcal</p>
+//       <button class="recipe__btn">Get Recipe</button>
+//       </div>
+//       </li>`;
+//   });
 
 // card 클릭하면 레시피 모달 창
 const getRecipeBtn = document.querySelector('.recipe__btn');

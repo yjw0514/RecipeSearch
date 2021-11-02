@@ -4,18 +4,17 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Movie Search</title>
+    <title>Recipe Search</title>
     <link rel="stylesheet" href="style.css" />
-    <!-- <link rel="stylesheet" href="result.css" /> -->
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script src="main.js" async></script>
+    <script src="main.js" defer></script>
   </head>
   <body>
     <nav>
       <div class="nav__box">
-      <p>Home</p>
+      <p class="nav__menu">Home</p>
       <ul>
-        <li>
+        <li class="nav__menu">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="24px"
@@ -37,57 +36,62 @@
       <div class="background">
         <div class="search">
           <div class="searchbar">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              height="24px"
-              viewBox="0 0 24 24"
-              width="24px"
-              fill="#808080"
-            >
-              <path d="M0 0h24v24H0z" fill="none" />
-              <path
-                d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
-              />
-            </svg>
             <input
               class="search__input"
               type="text"
-              placeholder="검색할 요리를 입력해주세요."
+              placeholder="Enter an ingredient"
             />
+            <button class="searchBtn">
+              <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="30px"
+            viewBox="0 0 24 24"
+            width="30px"
+            fill="#808080"
+            >
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path
+            d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+            />
+          </svg>
+            </button>
           </div>
 
           <main class="search__tag">
-            <div class="tag__item">
-              <p># chicken</p>
+            <div class="tag__item" data-value="chicken">
+              # chicken
             </div>
-            <div class="tag__item">
-              <p># salad</p>
+            <div class="tag__item" data-value="salad">
+              # salad
             </div>
-            <div class="tag__item">
-              <p># steak</p>
+            <div class="tag__item" data-value="steak">
+              # steak
             </div>
-            <div class="tag__item">
-              <p># noodle</p>
+            <div class="tag__item"  data-value="noodle">
+              # noodle
             </div>
-            <div class="tag__item">
-              <p># shrimp</p>
+            <div class="tag__item"  data-value="shrimp">
+              # shrimp
             </div>
-            <div class="tag__item">
-              <p># banana</p>
+            <div class="tag__item"  data-value="banana">
+              # banana
             </div>
-            <div class="tag__item">
-              <p># pizza</p>
+            <div class="tag__item"  data-value="asian">
+              # asian
             </div>
-            <div class="tag__item">
-              <p># tomato</p>
+            <div class="tag__item"  data-value="american">
+              # american
             </div>
           </main>
         </div>
+        <svg class="arrow__down" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
       </div>
     </section>
-    <section id="result">
-      <div class="background">
-        <!-- <img class="result_back" src="img/cinema_2.jpg" alt="cinema_2" /> -->
+    <section id="result" class="invisible" >
+      <svg 
+      class="arrow__up"
+      xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"  fill="#FFFFFF"><path d="M0 0h24v24H0z" fill="none"/><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>
+      <!-- <div class="background"  > -->
         <ul class="recipe__list">
           <!-- <li class="recipe__card">
             <div class="recipe__card__inner">
@@ -100,8 +104,20 @@
                 <p>요리순서</p>
               </div>
             </div> -->
-          </li>
+          <!-- </li> -->
         </ul>
+        <div class="pageination">
+          <button class="prev">
+            <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><rect fill="none" height="24" width="24"/><g><polygon points="17.77,3.77 16,2 6,12 16,22 17.77,20.23 9.54,12"/></g></svg>
+          </button>
+          <ul id="pages">
+            <!-- <li class="page">1</li> -->
+          </ul>
+          <button class="next">
+            <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><path d="M0,0h24v24H0V0z" fill="none"/></g><g><polygon points="6.23,20.23 8,22 18,12 8,2 6.23,3.77 14.46,12"/></g></svg>
+
+          </button>
+        </div>
       </div>
     </section>
    

@@ -4,13 +4,8 @@ const searchInput = document.querySelector('.search__input');
 const searchBtn = document.querySelector('.searchBtn');
 const recipeList = document.querySelector('.recipe__list');
 const resultPage = document.getElementById('result');
-const pages = document.getElementById('pages');
-const pageBtn = document.querySelectorAll('.page');
-const recipeBtn = document.querySelectorAll('.recipe__btn');
 const tagButtons = document.querySelector('.search__tag');
 const pagination = document.querySelector('.pagination');
-let searchedRecipe = [];
-
 let pageState = {
   searchword: '',
   currentPage: 1,
@@ -46,11 +41,6 @@ searchInput.addEventListener('keyup', (e) => {
 
 // scroll down 버튼
 const downBtn = document.querySelector('.arrow__down');
-if (searchedRecipe.length === 0) {
-  downBtn.classList.add('invisible');
-} else {
-  downBtn.classList.remove('invisible');
-}
 downBtn.addEventListener('click', () => {
   const location = resultPage.offsetTop;
   window.scrollTo({ top: location, behavior: 'smooth' });
@@ -58,13 +48,18 @@ downBtn.addEventListener('click', () => {
 
 // scroll up 버튼
 const topBtn = document.querySelector('.arrow__up');
+const homeBtn = document.querySelector('.homeBtn');
+homeBtn.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
 topBtn.addEventListener('click', () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
 // get recipe
 function getRecipe(searchword) {
-  console.log(pageState.currentPage);
+  loadingShow();
   axios
     .get('https://api.edamam.com/search?', {
       params: {
@@ -74,8 +69,12 @@ function getRecipe(searchword) {
         app_id: APP_ID,
         app_key: APP_KEY,
       },
+      Headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
     })
     .then((response) => {
+      // console.log(response.data.hits);
       searchInput.value = '';
       if (response.data.count > 100) {
         pageState.totalData = 100;
@@ -92,33 +91,99 @@ function getRecipe(searchword) {
         pagination.style.display = 'flex';
       }
 
-      resultPage.classList.remove('invisible');
-      const location = resultPage.offsetTop;
-      window.scrollTo({ top: location, behavior: 'smooth' });
+      if (!recipeData) {
+        downBtn.style.display = 'none';
+      } else {
+        downBtn.style.display = 'block';
+      }
     })
     .catch((error) => console.error(error));
 }
 
 function renderRecipe(recipeData) {
-  let html = '';
+  recipeList.innerHTML = '';
   recipeData.forEach((recipe) => {
     const data = recipe.recipe;
-    html += `<li class="recipe__card">
-      <div class="recipe__card__inner">
-      <img src=${data.image} alt="food" />
+    // recipeCard 생성
+    const recipeCard = document.createElement('li');
+    recipeCard.classList.add('recipe__card');
+    recipeCard.innerHTML = `
+    <div class="recipe__card__inner">
+    <img src=${data.image} alt="food" />
       <h3>${data.label}</h3>
       <p>${Math.floor(data.calories)}kcal</p>
-      <button class="recipe__btn">Get Recipe</button>
+      <a class="recipe__btn" href="${data.url}"  target="_blank" >Get Recipe</a>
       </div>
-      </li>`;
+      `;
+
+    // recipeMarkBtn 생성
+    const recipeSaveBtn = document.createElement('button');
+    recipeSaveBtn.classList.add('recipe__mark');
+    recipeSaveBtn.innerHTML = `<svg  xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 0 24 24" width="28px" >
+        <path d="M0 0h24v24H0z" fill="none"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+      </svg>`;
+    recipeCard.append(recipeSaveBtn);
+    recipeList.append(recipeCard);
+
+    recipeSaveBtn.addEventListener('click', (e) => {
+      recipeSaveHandler(e, data);
+    });
   });
 
-  recipeList.innerHTML = html;
+  scrollToResultPage();
+  loadingHidden();
+  renderPaging();
+}
+
+// 즐겨찾기
+const likeBtn = document.querySelector('.likeBtn');
+const likeList = document.querySelector('.like__list');
+const likeItems = document.querySelector('.like__items');
+likeBtn.addEventListener('click', () => {
+  likeList.classList.remove('invisible');
+  getLocalstorageRecipe();
+});
+
+// removeItem from localstorage
+function deleteSavedRecipe() {
+  console.log('de');
+}
+// setItem in localstorage
+function recipeSaveHandler(e, recipe) {
+  e.target.classList.add('active');
+  let likeRecipe = { name: recipe.label, img: recipe.image, link: recipe.url };
+  localStorage.setItem('likeRecipe', JSON.stringify(likeRecipe));
+}
+
+// getItem from localstorage
+function getLocalstorageRecipe() {
+  const savedRecipe = JSON.parse(localStorage.getItem('likeRecipe'));
+  const deleteBtn = document.createElement('button');
+  const li = document.createElement('li');
+  li.classList.add('like__list__item');
+  deleteBtn.classList.add('deleteBtn');
+  deleteBtn.innerHTML = `
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" ><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z"/></svg>
+`;
+  li.innerHTML = `
+      <a class="linkBtn" target="_blank" href="${savedRecipe.link}">
+        <svg xmlns="http://www.w3.org/2000/svg"viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
+      </a>
+    <img src=${savedRecipe.img} alt="recipe">
+    <p>${savedRecipe.name}</p>
+    `;
+
+  li.append(deleteBtn);
+  likeItems.append(li);
+  deleteBtn.addEventListener('click', deleteSavedRecipe);
+}
+
+function scrollToResultPage() {
   resultPage.classList.remove('invisible');
   const location = resultPage.offsetTop;
   window.scrollTo({ top: location, behavior: 'smooth' });
-
-  renderPaging();
 }
 
 // Pagination
@@ -126,8 +191,18 @@ function renderRecipe(recipeData) {
 function paging(totalData, dataPerPage, pageCount, currentPage) {
   let totalPageCount = Math.ceil(totalData / dataPerPage);
   pageState.totalPageCount = totalPageCount;
-  let firstPageNumber = currentPage - (currentPage % pageCount) + 1;
-  let lastPageNumber = currentPage - (currentPage % pageCount) + pageCount;
+
+  let firstPageNumber = '';
+  let lastPageNumber = '';
+  if (currentPage % pageCount === 0) {
+    // 5의 배수인 경우(pageCount의 배수일 때)
+    firstPageNumber = currentPage - dataPerPage;
+    lastPageNumber = currentPage;
+  } else {
+    firstPageNumber = currentPage - (currentPage % pageCount) + 1;
+    lastPageNumber = currentPage - (currentPage % pageCount) + pageCount;
+  }
+
   if (lastPageNumber > totalPageCount) lastPageNumber = totalPageCount;
   return {
     firstPageNumber,
@@ -150,68 +225,95 @@ function renderPaging() {
     pageNumber.classList.add('page');
     pageNumber.innerHTML = i;
     pageNumber.dataset.page = i;
-    pageNumber.addEventListener('click', changeCurrentPage);
     pages.append(pageNumber);
+    pageNumber.addEventListener('click', changeCurrentPage);
   }
+  const page = document.querySelectorAll('.page');
+  page.forEach((el) => {
+    if (+el.dataset.page === pageState.currentPage) {
+      el.style.backgroundColor = 'rgb(255, 213, 107)';
+    }
+  });
 
-  if (pageState.currentPage < pageState.pageCount) {
+  //prev버튼(현재 페이지가 5페이지 이하면 숨기기, 6-10페이지 일때부터 나타남)
+  if (pageState.currentPage <= pageState.pageCount) {
     prevBtn.style.display = 'none';
   } else {
     prevBtn.style.display = 'flex';
   }
 
-  if (pageState.totalData <= pageState.dataPerPage) {
+  //next 버튼(totalData가 20개 이하면 숨기기)
+  if (
+    pageState.totalData <= pageState.dataPerPage * pageState.pageCount ||
+    pageState.currentPage + pageState.pageCount > pageState.totalPageCount
+  ) {
     nextBtn.style.display = 'none';
   } else {
     nextBtn.style.display = 'flex';
   }
 }
 
+// page버튼 클릭하면 실행
 function changeCurrentPage(e) {
   pageState.currentPage = +e.target.dataset.page;
   getRecipe();
 }
 
-// prev, next Btn
+// prev버튼 클릭 이벤트
 const prevBtn = document.querySelector('.prev');
-const nextBtn = document.querySelector('.next');
 prevBtn.addEventListener('click', () => {
-  pageState.currentPage =
-    (Math.floor(pageState.currentPage / pageState.pageCount) - 1) *
-      pageState.pageCount +
-    1;
+  if (pageState.currentPage % pageState.pageCount === 0) {
+    pageState.currentPage =
+      (Math.floor(pageState.currentPage / pageState.pageCount) - 1) *
+        pageState.pageCount -
+      pageState.dataPerPage;
+  } else {
+    pageState.currentPage =
+      Math.floor(pageState.currentPage / pageState.pageCount) *
+        pageState.pageCount -
+      pageState.dataPerPage;
+  }
 
-  if (pageState.currentPage < pageState.pageCount) {
-    // prevBtn.classList.add('invisible');
+  if (pageState.currentPage <= pageState.pageCount) {
     prevBtn.style.display = 'none';
   } else {
-    // prevBtn.classList.remove('invisible');
-    prevBtn.style.display = 'block';
+    prevBtn.style.display = 'flex';
   }
-  console.log(pageState.currentPage);
 
   getRecipe();
 });
 
+// next버튼 클릭 이벤트
+const nextBtn = document.querySelector('.next');
 nextBtn.addEventListener('click', () => {
-  pageState.currentPage =
-    Math.ceil(pageState.currentPage / pageState.pageCount) *
-      pageState.pageCount +
-    1;
+  if (pageState.currentPage % pageState.pageCount === 0) {
+    pageState.currentPage =
+      Math.ceil(pageState.currentPage / pageState.pageCount) *
+        pageState.pageCount +
+      pageState.pageCount;
+  } else {
+    pageState.currentPage =
+      (Math.floor(pageState.currentPage / pageState.pageCount) + 1) *
+        pageState.pageCount +
+      pageState.pageCount;
+  }
 
   if (pageState.currentPage + pageState.pageCount > pageState.totalPageCount) {
-    // nextBtn.classList.add('invisible');
     nextBtn.style.display = 'none';
   } else {
-    // nextBtn.classList.remove('invisible');
-    nextBtn.style.display = 'block';
+    nextBtn.style.display = 'flex';
   }
-  console.log(pageState.currentPage);
+
   getRecipe();
 });
 
-// card 클릭하면 레시피 모달 창
-const getRecipeBtn = document.querySelector('.recipe__btn');
-recipeList.addEventListener('click', (e) => {
-  console.log(e);
-});
+// loadingBar
+const loadingImg = document.querySelector('.load__img');
+function loadingShow() {
+  loadingImg.style.display = 'block';
+}
+function loadingHidden() {
+  loadingImg.style.display = 'none';
+}
+
+window.onload = loadingHidden();

@@ -4,32 +4,36 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="#">
     <title>Recipe Search</title>
     <link rel="stylesheet" href="./src/style.css" />
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script type="module" src="./src/main.js" defer></script>
   </head>
   <body>
+    <div class="load__img">
+      <img src="./src/img/loading.gif" alt="spinner">
+    </div>
+    <ul class="like__list invisible" >
+      <button>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>
+      </button>
+      <div class="like__items">
+<!-- <li class="like__list__item">
+        <img src="./src/img/food3.jpg" alt="">
+        <p>name</p>
+      </li> -->
+      </div>
+      
+    </ul>
     <nav>
       <div class="nav__box">
-      <p class="nav__menu">Home</p>
-      <ul>
-        <li class="nav__menu">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="24px"
-            viewBox="0 0 24 24"
-            width="24px"
-            fill="#ffffff"
-          >
-            <path d="M0 0h24v24H0z" fill="none" />
-            <path
-              d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
-            />
-          </svg>
-        </li>
+      <p class="nav__menu homeBtn">Home</p>
+        <div class="nav__menu likeBtn">
+          <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 0 24 24" width="28px" fill="#ffffff"><path d="M0 0h24v24H0z" fill="none"/><path d="M0 0h24v24H0z" fill="none"/><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+        </div>
       </div>
-      </ul>
+      
     </nav>
     <!-- Search -->
     <section id="search">
@@ -91,30 +95,16 @@
       <svg 
       class="arrow__up"
       xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"  fill="#FFFFFF"><path d="M0 0h24v24H0z" fill="none"/><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>
-      <!-- <div class="background"  > -->
         <ul class="recipe__list">
-          <!-- <li class="recipe__card">
-            <div class="recipe__card__inner">
-              <h3>title</h3>
-              <img src="img/film.jpg" alt="food" />
-              <div class="recipe__card__content">
-               
-                <p>소요시간</p>
-                <p>칼로리</p>
-                <p>요리순서</p>
-              </div>
-            </div> -->
-          <!-- </li> -->
         </ul>
         <div class="pagination">
           <button class="prev">
-            <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><rect fill="none" height="24" width="24"/><g><polygon points="17.77,3.77 16,2 6,12 16,22 17.77,20.23 9.54,12"/></g></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="rgb(56, 56, 56)"><rect fill="none" height="24" width="24"/><g><polygon points="17.77,3.77 16,2 6,12 16,22 17.77,20.23 9.54,12"/></g></svg>
           </button>
           <ul id="pages">
-            <!-- <li class="page">1</li> -->
           </ul>
           <button class="next">
-            <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><path d="M0,0h24v24H0V0z" fill="none"/></g><g><polygon points="6.23,20.23 8,22 18,12 8,2 6.23,3.77 14.46,12"/></g></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="rgb(56, 56, 56)"><g><path d="M0,0h24v24H0V0z" fill="none"/></g><g><polygon points="6.23,20.23 8,22 18,12 8,2 6.23,3.77 14.46,12"/></g></svg>
 
           </button>
         </div>

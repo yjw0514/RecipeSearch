@@ -128,7 +128,7 @@ function renderRecipe(recipeData) {
     recipeList.append(recipeCard);
 
     recipeSaveBtn.addEventListener('click', (e) => {
-      recipeSaveHandler(e, data);
+      saveRecipeList(e, data);
     });
   });
 
@@ -138,46 +138,98 @@ function renderRecipe(recipeData) {
 }
 
 // 즐겨찾기
-const likeBtn = document.querySelector('.likeBtn');
-const likeList = document.querySelector('.like__list');
-const likeItems = document.querySelector('.like__items');
-likeBtn.addEventListener('click', () => {
-  likeList.classList.remove('invisible');
-  getLocalstorageRecipe();
+const favoritesBtn = document.querySelector('.likeBtn');
+const favoritesList = document.querySelector('.like__list');
+const favoritesRecipe = document.querySelector('.like__items');
+const closeBtn = document.querySelector('.closeBtn');
+
+// 즐겨찾기 목록 열기 &닫기
+favoritesBtn.addEventListener('click', () => {
+  favoritesList.classList.add('show');
+  loadRecipe();
 });
 
+closeBtn.addEventListener('click', () => {
+  favoritesList.classList.remove('show');
+});
+
+let savedFavoritesList = [];
+
 // removeItem from localstorage
-function deleteSavedRecipe() {
-  console.log('de');
+function deleteRecipe(e, recipe) {
+  const btn = e.target;
+  const list = btn.parentNode;
+  favoritesRecipe.removeChild(list);
+  const cleanRecipe = savedFavoritesList.filter((el) => {
+    return el.name !== recipe.name;
+  });
+  savedFavoritesList = cleanRecipe;
+  localStorage.setItem('allRecipes', JSON.stringify(savedFavoritesList));
 }
+
 // setItem in localstorage
-function recipeSaveHandler(e, recipe) {
+function saveRecipeList(e, recipe) {
+  savedFavoritesList = JSON.parse(localStorage.getItem('allRecipes'));
+  if (savedFavoritesList == null) savedFavoritesList = [];
+
+  let favoritesName = recipe.label;
+  let favoritesImg = recipe.image;
+  let favoritesLink = recipe.url;
+
+  let setRecipe = {
+    name: favoritesName,
+    image: favoritesImg,
+    link: favoritesLink,
+  };
+
   e.target.classList.add('active');
-  let likeRecipe = { name: recipe.label, img: recipe.image, link: recipe.url };
-  localStorage.setItem('likeRecipe', JSON.stringify(likeRecipe));
+  localStorage.setItem('setRecipe', JSON.stringify(setRecipe));
+  savedFavoritesList.push(setRecipe);
+  localStorage.setItem('allRecipes', JSON.stringify(savedFavoritesList));
+
+  loadRecipe(setRecipe);
+}
+
+function loadRecipe(addRecipe) {
+  if (addRecipe) {
+    paintFavorites(addRecipe);
+  } else {
+    savedFavoritesList = JSON.parse(localStorage.getItem('allRecipes'));
+    if (savedFavoritesList === null) {
+      return (favoritesRecipe.innerHTML = '없습니다.');
+    }
+    savedFavoritesList.forEach((el) => {
+      paintFavorites(el);
+    });
+  }
 }
 
 // getItem from localstorage
-function getLocalstorageRecipe() {
-  const savedRecipe = JSON.parse(localStorage.getItem('likeRecipe'));
+function paintFavorites(recipe) {
   const deleteBtn = document.createElement('button');
   const li = document.createElement('li');
+
   li.classList.add('like__list__item');
   deleteBtn.classList.add('deleteBtn');
   deleteBtn.innerHTML = `
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" ><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z"/></svg>
-`;
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" >
+    <path d="M0 0h24v24H0z" fill="none"/>
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z"/>
+    </svg>
+  `;
   li.innerHTML = `
-      <a class="linkBtn" target="_blank" href="${savedRecipe.link}">
-        <svg xmlns="http://www.w3.org/2000/svg"viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
-      </a>
-    <img src=${savedRecipe.img} alt="recipe">
-    <p>${savedRecipe.name}</p>
-    `;
+  <a class="linkBtn" target="_blank" href=${recipe.link}>
+    <svg xmlns="http://www.w3.org/2000/svg"viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/>
+    <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
+    </svg>
+  </a>
+  <img src=${recipe.image} alt="recipe">
+  <p>${recipe.name}</p>
+  `;
 
   li.append(deleteBtn);
-  likeItems.append(li);
-  deleteBtn.addEventListener('click', deleteSavedRecipe);
+  favoritesRecipe.append(li);
+  deleteBtn.addEventListener('click', (e) => deleteRecipe(e, recipe));
 }
 
 function scrollToResultPage() {

@@ -14,6 +14,20 @@ let pageState = {
   dataPerPage: DATAPERPAGE,
   totalPageCount: 0,
 };
+let saveFavoritesName = [];
+let savedFavoritesList = [];
+function init() {
+  savedFavoritesList = JSON.parse(localStorage.getItem('allRecipes'));
+  // if (savedFavoritesList == null) savedFavoritesList = [];
+
+  savedFavoritesList.forEach((el) => {
+    saveFavoritesName.push(el.label);
+  });
+  console.log(saveFavoritesName);
+  console.log(savedFavoritesList);
+}
+
+init();
 
 //tagBtn 클릭
 tagButtons.addEventListener('click', (e) => {
@@ -21,14 +35,15 @@ tagButtons.addEventListener('click', (e) => {
   pageState.searchword = e.target.dataset.value;
   if (e.target.dataset.value == null) return;
   getRecipe(e.target.dataset.value);
+  favoritesList.classList.remove('show');
 });
 
 // searching
 searchBtn.addEventListener('click', () => {
   pageState.currentPage = 1;
-
   pageState.searchword = searchInput.value;
   getRecipe(searchInput.value);
+  favoritesList.classList.remove('show');
 });
 
 searchInput.addEventListener('keyup', (e) => {
@@ -36,6 +51,7 @@ searchInput.addEventListener('keyup', (e) => {
     pageState.currentPage = 1;
     pageState.searchword = e.target.value;
     getRecipe(e.target.value);
+    favoritesList.classList.remove('show');
   }
 });
 
@@ -127,21 +143,31 @@ function renderRecipe(recipeData) {
     recipeCard.append(recipeSaveBtn);
     recipeList.append(recipeCard);
 
-    recipeSaveBtn.addEventListener('click', (e) => {
-      saveRecipeList(e, data);
-    });
-  });
+    if (saveFavoritesName.includes(data.label)) {
+      recipeSaveBtn.classList.add('active');
+    }
 
-  scrollToResultPage();
-  loadingHidden();
-  renderPaging();
+    recipeSaveBtn.addEventListener('click', (e) => {
+      if (saveFavoritesName.includes(data.label)) {
+        recipeSaveBtn.classList.remove('active');
+        deleteRecipe(e, data);
+      } else {
+        saveRecipeList(e, data);
+      }
+    });
+    scrollToResultPage();
+    loadingHidden();
+    renderPaging();
+  });
 }
 
 // 즐겨찾기
+
 const favoritesBtn = document.querySelector('.likeBtn');
 const favoritesList = document.querySelector('.like__list');
 const favoritesRecipe = document.querySelector('.like__items');
 const closeBtn = document.querySelector('.closeBtn');
+const noFavorites = document.querySelector('.nofavorites');
 
 // 즐겨찾기 목록 열기 &닫기
 favoritesBtn.addEventListener('click', () => {
@@ -153,18 +179,20 @@ closeBtn.addEventListener('click', () => {
   favoritesList.classList.remove('show');
 });
 
-let savedFavoritesList = [];
-
 // removeItem from localstorage
 function deleteRecipe(e, recipe) {
-  const btn = e.target;
-  const list = btn.parentNode;
-  favoritesRecipe.removeChild(list);
+  savedFavoritesList = JSON.parse(localStorage.getItem('allRecipes'));
   const cleanRecipe = savedFavoritesList.filter((el) => {
-    return el.name !== recipe.name;
+    return el.label !== recipe.label;
   });
   savedFavoritesList = cleanRecipe;
+
   localStorage.setItem('allRecipes', JSON.stringify(savedFavoritesList));
+  if (savedFavoritesList === null || savedFavoritesList.length === 0) {
+    noFavorites.classList.remove('invisible');
+  } else {
+    noFavorites.classList.add('invisible');
+  }
 }
 
 // setItem in localstorage
@@ -172,39 +200,38 @@ function saveRecipeList(e, recipe) {
   savedFavoritesList = JSON.parse(localStorage.getItem('allRecipes'));
   if (savedFavoritesList == null) savedFavoritesList = [];
 
-  let favoritesName = recipe.label;
-  let favoritesImg = recipe.image;
-  let favoritesLink = recipe.url;
-
   let setRecipe = {
-    name: favoritesName,
-    image: favoritesImg,
-    link: favoritesLink,
+    label: recipe.label,
+    image: recipe.image,
+    link: recipe.url,
   };
 
   e.target.classList.add('active');
-  localStorage.setItem('setRecipe', JSON.stringify(setRecipe));
   savedFavoritesList.push(setRecipe);
   localStorage.setItem('allRecipes', JSON.stringify(savedFavoritesList));
-
   loadRecipe(setRecipe);
+
+  if (savedFavoritesList === null || savedFavoritesList.length === 0) {
+    noFavorites.classList.remove('invisible');
+  } else {
+    noFavorites.classList.add('invisible');
+  }
 }
 
+// getItem from localstorage
 function loadRecipe(addRecipe) {
   if (addRecipe) {
     paintFavorites(addRecipe);
   } else {
-    savedFavoritesList = JSON.parse(localStorage.getItem('allRecipes'));
-    if (savedFavoritesList === null) {
-      return (favoritesRecipe.innerHTML = '없습니다.');
-    }
+    favoritesRecipe.innerHTML = '';
+    let savedFavoritesList = JSON.parse(localStorage.getItem('allRecipes'));
+
     savedFavoritesList.forEach((el) => {
       paintFavorites(el);
     });
   }
 }
 
-// getItem from localstorage
 function paintFavorites(recipe) {
   const deleteBtn = document.createElement('button');
   const li = document.createElement('li');
@@ -224,12 +251,18 @@ function paintFavorites(recipe) {
     </svg>
   </a>
   <img src=${recipe.image} alt="recipe">
-  <p>${recipe.name}</p>
+  <p>${recipe.label}</p>
   `;
 
   li.append(deleteBtn);
   favoritesRecipe.append(li);
-  deleteBtn.addEventListener('click', (e) => deleteRecipe(e, recipe));
+
+  deleteBtn.addEventListener('click', (e) => {
+    const btn = e.target;
+    const list = btn.parentNode;
+    favoritesRecipe.removeChild(list);
+    deleteRecipe(e, recipe);
+  });
 }
 
 function scrollToResultPage() {
@@ -367,5 +400,4 @@ function loadingShow() {
 function loadingHidden() {
   loadingImg.style.display = 'none';
 }
-
 window.onload = loadingHidden();

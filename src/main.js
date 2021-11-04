@@ -14,17 +14,22 @@ let pageState = {
   dataPerPage: DATAPERPAGE,
   totalPageCount: 0,
 };
-let saveFavoritesName = [];
+
+const favoritesBtn = document.querySelector('.likeBtn');
+const favoritesList = document.querySelector('.like__list');
+const favoritesRecipe = document.querySelector('.like__items');
+const closeBtn = document.querySelector('.closeBtn');
+const noFavorites = document.querySelector('.nofavorites');
 let savedFavoritesList = [];
+
 function init() {
   savedFavoritesList = JSON.parse(localStorage.getItem('allRecipes'));
-  // if (savedFavoritesList == null) savedFavoritesList = [];
-
-  savedFavoritesList.forEach((el) => {
-    saveFavoritesName.push(el.label);
-  });
-  console.log(saveFavoritesName);
-  console.log(savedFavoritesList);
+  if (savedFavoritesList == null) savedFavoritesList = [];
+  if (savedFavoritesList === null || savedFavoritesList.length === 0) {
+    noFavorites.classList.remove('invisible');
+  } else {
+    noFavorites.classList.add('invisible');
+  }
 }
 
 init();
@@ -123,6 +128,7 @@ function renderRecipe(recipeData) {
     // recipeCard 생성
     const recipeCard = document.createElement('li');
     recipeCard.classList.add('recipe__card');
+    recipeCard.dataset.label = data.label;
     recipeCard.innerHTML = `
     <div class="recipe__card__inner">
     <img src=${data.image} alt="food" />
@@ -142,32 +148,28 @@ function renderRecipe(recipeData) {
       </svg>`;
     recipeCard.append(recipeSaveBtn);
     recipeList.append(recipeCard);
-
-    if (saveFavoritesName.includes(data.label)) {
+    if (savedFavoritesList.some((el) => el.label === data.label)) {
       recipeSaveBtn.classList.add('active');
+    } else {
+      recipeSaveBtn.classList.remove('active');
     }
 
     recipeSaveBtn.addEventListener('click', (e) => {
-      if (saveFavoritesName.includes(data.label)) {
+      if (savedFavoritesList.some((el) => el.label === data.label)) {
         recipeSaveBtn.classList.remove('active');
         deleteRecipe(e, data);
       } else {
         saveRecipeList(e, data);
       }
     });
-    scrollToResultPage();
-    loadingHidden();
-    renderPaging();
   });
+
+  scrollToResultPage();
+  loadingHidden();
+  renderPaging();
 }
 
 // 즐겨찾기
-
-const favoritesBtn = document.querySelector('.likeBtn');
-const favoritesList = document.querySelector('.like__list');
-const favoritesRecipe = document.querySelector('.like__items');
-const closeBtn = document.querySelector('.closeBtn');
-const noFavorites = document.querySelector('.nofavorites');
 
 // 즐겨찾기 목록 열기 &닫기
 favoritesBtn.addEventListener('click', () => {
@@ -181,7 +183,16 @@ closeBtn.addEventListener('click', () => {
 
 // removeItem from localstorage
 function deleteRecipe(e, recipe) {
-  savedFavoritesList = JSON.parse(localStorage.getItem('allRecipes'));
+  // savedFavoritesList = JSON.parse(localStorage.getItem('allRecipes'));
+  let li = recipeList.childNodes;
+  if (li.length > 1) {
+    li.forEach((el) => {
+      if (el.dataset.label === recipe.label) {
+        el.lastChild.classList.remove('active');
+      }
+    });
+  }
+
   const cleanRecipe = savedFavoritesList.filter((el) => {
     return el.label !== recipe.label;
   });
@@ -193,11 +204,12 @@ function deleteRecipe(e, recipe) {
   } else {
     noFavorites.classList.add('invisible');
   }
+  loadRecipe(savedFavoritesList);
 }
 
 // setItem in localstorage
 function saveRecipeList(e, recipe) {
-  savedFavoritesList = JSON.parse(localStorage.getItem('allRecipes'));
+  // savedFavoritesList = JSON.parse(localStorage.getItem('allRecipes'));
   if (savedFavoritesList == null) savedFavoritesList = [];
 
   let setRecipe = {
@@ -220,16 +232,16 @@ function saveRecipeList(e, recipe) {
 
 // getItem from localstorage
 function loadRecipe(addRecipe) {
-  if (addRecipe) {
-    paintFavorites(addRecipe);
-  } else {
-    favoritesRecipe.innerHTML = '';
-    let savedFavoritesList = JSON.parse(localStorage.getItem('allRecipes'));
+  // if (addRecipe) {
+  //   paintFavorites(addRecipe);
+  // } else {
+  favoritesRecipe.innerHTML = '';
+  savedFavoritesList = JSON.parse(localStorage.getItem('allRecipes'));
 
-    savedFavoritesList.forEach((el) => {
-      paintFavorites(el);
-    });
-  }
+  savedFavoritesList.forEach((el) => {
+    paintFavorites(el);
+  });
+  // }
 }
 
 function paintFavorites(recipe) {

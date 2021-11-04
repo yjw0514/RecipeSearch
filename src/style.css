@@ -8,7 +8,7 @@
 
 body {
   width: 100%;
-  height: 200vh;
+  height: 100vh;
   overflow-y: hidden;
   font-family: 'Poppins', sans-serif;
   color: rgb(56, 56, 56);
@@ -102,6 +102,7 @@ nav {
 }
 
 .show {
+  top: 0;
   right: 0;
 }
 
@@ -163,7 +164,7 @@ nav {
 #search {
   width: 100%;
   max-width: 1600px;
-  height: 100vh;
+  height: 100%;
   margin: 0 auto;
   background-image: url('img/food.jpg');
   background-position: center;
@@ -173,7 +174,7 @@ nav {
 }
 
 .background {
-  min-height: 100vh;
+  height: 100%;
   width: 100%;
   background-color: rgba(0, 0, 0, 0.3);
   padding: 120px 80px 80px;
@@ -185,7 +186,7 @@ nav {
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  width: 44px;
+  width: 60px;
   z-index: 40;
   cursor: pointer;
   background-color: transparent;
@@ -280,152 +281,133 @@ nav {
   font-weight: 600;
 }
 
-/* Result */
-#result {
-  width: 100%;
-  max-width: 1600px;
-  height: 100vh;
-  margin: 0 auto 10px;
-  padding: 120px 80px 80px;
-  background-image: url('img/result.jpg');
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  position: relative;
-  /* overflow-y: scroll; */
-}
+@media screen and (max-width: 768px) {
+  .load__img img {
+    width: 5rem;
+    height: 5rem;
+  }
 
-.invisible {
-  display: none;
-}
+  /* navbar */
+  nav {
+    height: 60px;
+  }
 
-.no__result {
-  color: #ffffff;
-  font-size: 32px;
-  margin: 3rem auto;
-}
+  .nav__box {
+    padding: 20px 40px;
+    font-size: 16px;
+  }
 
-.arrow__up {
-  position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40px;
-  z-index: 40;
-  cursor: pointer;
-  background-color: transparent;
-}
+  .nav__menu {
+    cursor: pointer;
+  }
 
-.recipe__list {
-  width: 90%;
-  height: 90%;
-  margin: auto;
-  display: flex;
-  /* align-items: center; */
-  flex-wrap: wrap;
-}
+  .like__list {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    height: 100%;
+    background-color: rgba(255, 217, 91, 0.96);
+    z-index: 200;
+    padding: 1rem 1rem 1rem;
+    transition: all 0.4s ease-in-out;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+      rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+  }
 
-.recipe__card {
-  position: relative;
-  width: calc(25% - 24px);
-  margin: 0 12px 24px;
-  height: 400px;
-  background-color: rgb(255, 255, 255);
-  border-radius: 6px;
-  display: flex;
-  justify-content: center;
-  box-shadow: 0 4px 21px -12px rgba(0, 0, 0, 0.8);
-  /* padding: 14px; */
-}
+  .nofavorites {
+    display: flex;
+    justify-content: center;
+    margin-top: 4rem;
+  }
 
-.recipe__card__inner {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  align-items: center;
-}
+  .show {
+    right: 0;
+  }
 
-.recipe__card__inner img {
-  width: 100%;
-  margin: 0 auto;
-  border-radius: 4px;
-  margin-bottom: 10px;
-}
+  .like__list > button {
+    width: 26px;
+    height: 26px;
+  }
 
-.recipe__card__inner > h3 {
-  width: 100%;
-  display: inline-block;
-  font-size: 18px;
-  word-break: keep-all;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  margin-bottom: 10px;
-}
+  .like__items {
+    margin-top: 1.5rem;
+  }
 
-.recipe__card__inner > p {
-  font-size: 14px;
-}
+  .like__list__item {
+    position: relative;
+    width: 70%;
+    height: auto;
+    background-color: wheat;
+    padding: 10px;
+    border-radius: 6px;
+    margin: 0 auto;
+    box-shadow: 0 4px 21px -12px rgba(0, 0, 0, 0.8);
+    margin-bottom: 10px;
+  }
 
-.recipe__btn {
-  width: 120px;
-  height: 40px;
-  padding: 4px;
-  border-radius: 50px;
-  background-color: rgb(255, 213, 107);
-  margin-top: 10px;
-  font-size: 18px;
-  line-height: 26px;
-  font-weight: 600;
-  cursor: pointer;
-}
+  .deleteBtn {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    width: 24px;
+    cursor: pointer;
+    background-color: transparent;
+    fill: rgb(228, 132, 42);
+  }
 
-.recipe__mark {
-  width: 30px;
-  height: 30px;
-  position: absolute;
-  right: 10px;
-  bottom: 10px;
-  cursor: pointer;
-  background-color: transparent;
-  fill: rgb(196, 196, 196);
-}
+  .like__list__item > img {
+    width: 100%;
+  }
 
-.active {
-  fill: rgb(255, 207, 50);
-}
+  .like__list__item > p {
+    font-size: 14px;
+  }
 
-/* paging css*/
-.pagination {
-  width: auto;
-  height: 30px;
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  justify-content: space-between;
-}
+  /* Search */
+  #search {
+    height: 100%;
+  }
 
-#pages {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-}
+  .background {
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 80px 40px;
+  }
 
-.prev,
-.next,
-.page {
-  width: 30px;
-  background-color: #ffffff;
-  margin: 0 2px;
-  border-radius: 2px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0 4px;
-  cursor: pointer;
+  .arrow__down {
+    width: 40px;
+  }
+
+  .searchbar {
+    height: 50px;
+  }
+
+  .search__input {
+    background-color: #f4f6ff;
+    border: none;
+    width: 80%;
+    height: 70%;
+    padding-left: 10px;
+    font-size: 14px;
+  }
+
+  .search__input::placeholder {
+    color: rgb(219, 168, 37);
+  }
+
+  .search__tag {
+    width: 380px;
+  }
+
+  .tag__item {
+    height: auto;
+    margin: 0 10px 14px;
+    padding: 6px 10px;
+    font-size: 12px;
+  }
 }
+/* 
+@media screen and (max-width: 550px) {
+} */

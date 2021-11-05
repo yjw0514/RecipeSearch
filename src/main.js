@@ -1,4 +1,4 @@
-import { APP_ID, APP_KEY, DATAPERPAGE, PAGECOUNT } from './config.js';
+// import { APP_ID, APP_KEY, DATAPERPAGE, PAGECOUNT } from './config.js';
 
 const searchInput = document.querySelector('.search__input');
 const searchBtn = document.querySelector('.searchBtn');

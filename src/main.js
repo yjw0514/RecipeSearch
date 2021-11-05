@@ -91,8 +91,8 @@ function getRecipe(searchword) {
         to: pageState.currentPage * pageState.dataPerPage,
         app_id: '4aa48406',
         app_key: '88c3b0f387487edd5dfc3eaee1562921',
-        app_id: APP_ID,
-        app_key: APP_KEY,
+        // app_id: APP_ID,
+        // app_key: APP_KEY,
       },
       Headers: {
         'Access-Control-Allow-Origin': '*',

@@ -96,6 +96,7 @@ function getRecipe(searchword) {
       },
       Headers: {
         'Access-Control-Allow-Origin': '*',
+        'permissions-policy': 'interest-cohort=()',
       },
     })
     .then((response) => {

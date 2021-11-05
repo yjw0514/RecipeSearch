@@ -10,8 +10,10 @@ let pageState = {
   searchword: '',
   currentPage: 1,
   totalData: 0,
-  pageCount: PAGECOUNT,
-  dataPerPage: DATAPERPAGE,
+  pageCount: 5,
+  dataPerPage: 4,
+  // pageCount: PAGECOUNT,
+  // dataPerPage: DATAPERPAGE,
   totalPageCount: 0,
 };
 
@@ -87,6 +89,8 @@ function getRecipe(searchword) {
         q: pageState.searchword,
         from: (pageState.currentPage - 1) * pageState.dataPerPage,
         to: pageState.currentPage * pageState.dataPerPage,
+        app_id: '4aa48406',
+        app_key: '88c3b0f387487edd5dfc3eaee1562921',
         app_id: APP_ID,
         app_key: APP_KEY,
       },

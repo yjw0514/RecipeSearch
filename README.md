@@ -10,4 +10,11 @@
 
 <br/>
 <br/>
+
+#### 웹사이트 전체
+
 <img src="./src/img/RecipeSearch.png" width="500px">
+
+#### 즐겨찾기 기능
+
+<img src="./src/img/favorites.png" width="500px">

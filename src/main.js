@@ -1,4 +1,11 @@
 // import { APP_ID, APP_KEY, DATAPERPAGE, PAGECOUNT } from './config.js';
+import {
+  favoritesList,
+  savedFavoritesList,
+  init,
+  saveRecipeList,
+} from './favorites.js';
+import { renderPaging } from './pagination.js';
 
 const searchInput = document.querySelector('.search__input');
 const searchBtn = document.querySelector('.searchBtn');
@@ -17,24 +24,18 @@ let pageState = {
   totalPageCount: 0,
 };
 
-const favoritesBtn = document.querySelector('.likeBtn');
-const favoritesList = document.querySelector('.like__list');
-const favoritesRecipe = document.querySelector('.like__items');
-const closeBtn = document.querySelector('.closeBtn');
-const noFavorites = document.querySelector('.nofavorites');
-let savedFavoritesList = [];
-
-function init() {
-  savedFavoritesList = JSON.parse(localStorage.getItem('allRecipes'));
-  if (savedFavoritesList == null) savedFavoritesList = [];
-  if (savedFavoritesList === null || savedFavoritesList.length === 0) {
-    noFavorites.classList.remove('invisible');
-  } else {
-    noFavorites.classList.add('invisible');
-  }
+// loadingBar
+const loadingImg = document.querySelector('.load__img');
+function loadingShow() {
+  loadingImg.style.display = 'block';
 }
-
-init();
+function loadingHidden() {
+  loadingImg.style.display = 'none';
+}
+window.onload = () => {
+  loadingHidden();
+  init();
+};
 
 //tagBtn 클릭
 tagButtons.addEventListener('click', (e) => {
@@ -81,7 +82,7 @@ topBtn.addEventListener('click', () => {
 });
 
 // get recipe
-function getRecipe(searchword) {
+export function getRecipe(searchword) {
   loadingShow();
   axios
     .get('https://api.edamam.com/search?', {
@@ -100,7 +101,6 @@ function getRecipe(searchword) {
       },
     })
     .then((response) => {
-      // console.log(response.data.hits);
       searchInput.value = '';
       if (response.data.count > 100) {
         pageState.totalData = 100;
@@ -112,6 +112,7 @@ function getRecipe(searchword) {
       if (recipeData.length == 0) {
         recipeList.innerHTML = `<h2 class="no__result">Sorry, we didn't find any Recipe!</h2>`;
         pagination.style.display = 'none';
+        scrollToResultPage();
       } else {
         renderRecipe(recipeData);
         pagination.style.display = 'flex';
@@ -174,247 +175,19 @@ function renderRecipe(recipeData) {
   renderPaging();
 }
 
-// 즐겨찾기
-
-// 즐겨찾기 목록 열기 &닫기
-favoritesBtn.addEventListener('click', () => {
-  favoritesList.classList.add('show');
-  loadRecipe();
-});
-
-closeBtn.addEventListener('click', () => {
-  favoritesList.classList.remove('show');
-});
-
-// removeItem from localstorage
-function deleteRecipe(e, recipe) {
-  // savedFavoritesList = JSON.parse(localStorage.getItem('allRecipes'));
-  let li = recipeList.childNodes;
-  if (li.length > 1) {
-    li.forEach((el) => {
-      if (el.dataset.label === recipe.label) {
-        el.lastChild.classList.remove('active');
-      }
-    });
-  }
-
-  const cleanRecipe = savedFavoritesList.filter((el) => {
-    return el.label !== recipe.label;
-  });
-  savedFavoritesList = cleanRecipe;
-
-  localStorage.setItem('allRecipes', JSON.stringify(savedFavoritesList));
-  if (savedFavoritesList === null || savedFavoritesList.length === 0) {
-    noFavorites.classList.remove('invisible');
-  } else {
-    noFavorites.classList.add('invisible');
-  }
-  loadRecipe(savedFavoritesList);
-}
-
-// setItem in localstorage
-function saveRecipeList(e, recipe) {
-  // savedFavoritesList = JSON.parse(localStorage.getItem('allRecipes'));
-  if (savedFavoritesList == null) savedFavoritesList = [];
-
-  let setRecipe = {
-    label: recipe.label,
-    image: recipe.image,
-    link: recipe.url,
-  };
-
-  e.target.classList.add('active');
-  savedFavoritesList.push(setRecipe);
-  localStorage.setItem('allRecipes', JSON.stringify(savedFavoritesList));
-  loadRecipe(setRecipe);
-
-  if (savedFavoritesList === null || savedFavoritesList.length === 0) {
-    noFavorites.classList.remove('invisible');
-  } else {
-    noFavorites.classList.add('invisible');
-  }
-}
-
-// getItem from localstorage
-function loadRecipe(addRecipe) {
-  // if (addRecipe) {
-  //   paintFavorites(addRecipe);
-  // } else {
-  favoritesRecipe.innerHTML = '';
-  savedFavoritesList = JSON.parse(localStorage.getItem('allRecipes'));
-
-  savedFavoritesList.forEach((el) => {
-    paintFavorites(el);
-  });
-  // }
-}
-
-function paintFavorites(recipe) {
-  const deleteBtn = document.createElement('button');
-  const li = document.createElement('li');
-
-  li.classList.add('like__list__item');
-  deleteBtn.classList.add('deleteBtn');
-  deleteBtn.innerHTML = `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" >
-    <path d="M0 0h24v24H0z" fill="none"/>
-    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z"/>
-    </svg>
-  `;
-  li.innerHTML = `
-  <a class="linkBtn" target="_blank" href=${recipe.link}>
-    <svg xmlns="http://www.w3.org/2000/svg"viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/>
-    <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
-    </svg>
-  </a>
-  <img src=${recipe.image} alt="recipe">
-  <p>${recipe.label}</p>
-  `;
-
-  li.append(deleteBtn);
-  favoritesRecipe.append(li);
-
-  deleteBtn.addEventListener('click', (e) => {
-    const btn = e.target;
-    const list = btn.parentNode;
-    favoritesRecipe.removeChild(list);
-    deleteRecipe(e, recipe);
-  });
-}
-
 function scrollToResultPage() {
   resultPage.classList.remove('invisible');
   const location = resultPage.offsetTop;
   window.scrollTo({ top: location, behavior: 'smooth' });
+  loadingHidden();
 }
 
-// Pagination
-
-function paging(totalData, dataPerPage, pageCount, currentPage) {
-  let totalPageCount = Math.ceil(totalData / dataPerPage);
-  pageState.totalPageCount = totalPageCount;
-
-  let firstPageNumber = '';
-  let lastPageNumber = '';
-  if (currentPage % pageCount === 0) {
-    // 5의 배수인 경우(pageCount의 배수일 때)
-    firstPageNumber = currentPage - dataPerPage;
-    lastPageNumber = currentPage;
-  } else {
-    firstPageNumber = currentPage - (currentPage % pageCount) + 1;
-    lastPageNumber = currentPage - (currentPage % pageCount) + pageCount;
-  }
-
-  if (lastPageNumber > totalPageCount) lastPageNumber = totalPageCount;
-  return {
-    firstPageNumber,
-    lastPageNumber,
-  };
-}
-
-function renderPaging() {
-  const pages = document.querySelector('#pages');
-  pages.innerHTML = '';
-  const { firstPageNumber, lastPageNumber } = paging(
-    pageState.totalData,
-    pageState.dataPerPage,
-    pageState.pageCount,
-    pageState.currentPage
-  );
-
-  for (let i = firstPageNumber; i <= lastPageNumber; i++) {
-    const pageNumber = document.createElement('li');
-    pageNumber.classList.add('page');
-    pageNumber.innerHTML = i;
-    pageNumber.dataset.page = i;
-    pages.append(pageNumber);
-    pageNumber.addEventListener('click', changeCurrentPage);
-  }
-  const page = document.querySelectorAll('.page');
-  page.forEach((el) => {
-    if (+el.dataset.page === pageState.currentPage) {
-      el.style.backgroundColor = 'rgb(255, 213, 107)';
-    }
-  });
-
-  //prev버튼(현재 페이지가 5페이지 이하면 숨기기, 6-10페이지 일때부터 나타남)
-  if (pageState.currentPage <= pageState.pageCount) {
-    prevBtn.style.display = 'none';
-  } else {
-    prevBtn.style.display = 'flex';
-  }
-
-  //next 버튼(totalData가 20개 이하면 숨기기)
-  if (
-    pageState.totalData <= pageState.dataPerPage * pageState.pageCount ||
-    pageState.currentPage + pageState.pageCount > pageState.totalPageCount
-  ) {
-    nextBtn.style.display = 'none';
-  } else {
-    nextBtn.style.display = 'flex';
-  }
-}
-
-// page버튼 클릭하면 실행
-function changeCurrentPage(e) {
-  pageState.currentPage = +e.target.dataset.page;
-  getRecipe();
-}
-
-// prev버튼 클릭 이벤트
-const prevBtn = document.querySelector('.prev');
-prevBtn.addEventListener('click', () => {
-  if (pageState.currentPage % pageState.pageCount === 0) {
-    pageState.currentPage =
-      (Math.floor(pageState.currentPage / pageState.pageCount) - 1) *
-        pageState.pageCount -
-      pageState.dataPerPage;
-  } else {
-    pageState.currentPage =
-      Math.floor(pageState.currentPage / pageState.pageCount) *
-        pageState.pageCount -
-      pageState.dataPerPage;
-  }
-
-  if (pageState.currentPage <= pageState.pageCount) {
-    prevBtn.style.display = 'none';
-  } else {
-    prevBtn.style.display = 'flex';
-  }
-
-  getRecipe();
-});
-
-// next버튼 클릭 이벤트
-const nextBtn = document.querySelector('.next');
-nextBtn.addEventListener('click', () => {
-  if (pageState.currentPage % pageState.pageCount === 0) {
-    pageState.currentPage =
-      Math.ceil(pageState.currentPage / pageState.pageCount) *
-        pageState.pageCount +
-      pageState.pageCount;
-  } else {
-    pageState.currentPage =
-      (Math.floor(pageState.currentPage / pageState.pageCount) + 1) *
-        pageState.pageCount +
-      pageState.pageCount;
-  }
-
-  if (pageState.currentPage + pageState.pageCount > pageState.totalPageCount) {
-    nextBtn.style.display = 'none';
-  } else {
-    nextBtn.style.display = 'flex';
-  }
-
-  getRecipe();
-});
-
-// loadingBar
-const loadingImg = document.querySelector('.load__img');
-function loadingShow() {
-  loadingImg.style.display = 'block';
-}
-function loadingHidden() {
-  loadingImg.style.display = 'none';
-}
-window.onload = loadingHidden();
+export {
+  searchInput,
+  searchBtn,
+  recipeList,
+  resultPage,
+  tagButtons,
+  pagination,
+  pageState,
+};
